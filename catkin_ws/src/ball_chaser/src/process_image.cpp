@@ -29,13 +29,14 @@ void process_image_callback(const sensor_msgs::Image img)
     int white_pixel = 255; //255 would be pure white but camera seems to be giving lower values
     int height = img.height;
     int width = img.width;
+    int step = img.step;
     bool ballFound = false;
     int pixelsFound = 0;
     float posX = 0;
     float posY = 0;
     int pixelCount = 0;
-    for (int pixel = 0; pixel<height*width;pixel++){
-        if (img.data[pixel]>=white_pixel){
+    for (int pixel = 0; pixel<height*width*step;pixel=pixel+3){
+        if (img.data[pixel]>=white_pixel & img.data[pixel+1]>=white_pixel & img.data[pixel+2]>=white_pixel){
             ballFound = true;
             int X = pixel%width;
 //            int Y = pixel/width;
