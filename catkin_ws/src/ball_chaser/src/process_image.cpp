@@ -33,17 +33,21 @@ void process_image_callback(const sensor_msgs::Image img)
     int pixelsFound = 0;
     float posX = 0;
     float posY = 0;
+    int pixelCount = 0;
     for (int pixel = 0; pixel<height*width;pixel++){
         if (img.data[pixel]>=white_pixel){
             ballFound = true;
-            int posX = pixel%width;
-            break;
+            int X = pixel%width;
 //            int Y = pixel/width;
             // Keep updating the ball position as we find pixels. Note that we are assuming every white pixel is part of the ball.
-//            posX = (posX*pixelsFound + X) / (pixelsFound+1);
+            posX = (posX*pixelsFound + X) / (pixelsFound+1);
 //            posY = (posY*pixelsFound + Y) / (pixelsFound+1);
-//            pixelsFound = pixelsFound + 1;
+            pixelsFound = pixelsFound + 1;
         }
+        if (pixel%200000 == 0){
+            ROS_INFO("Pixel [%i] has value [%i]",pixel,img.data[pixel]);
+        }
+        pixelCount++;
     }
     // By default we stop (default is no ball found)
     float lin_x = 0;
@@ -51,9 +55,11 @@ void process_image_callback(const sensor_msgs::Image img)
     if (ballFound){ //P controller
         ROS_INFO("Ball Found, Calculating Request");
         //Ball detected, we need to calculate a velocity and rotation so that we can follow the ball
-        lin_x = MAXVELOCITY;// / float(pixelsFound) / (float(height)*float(width)); // We want to go faster it the ball is further away
+        lin_x = 0;//MAXVELOCITY;// / float(pixelsFound) / (float(height)*float(width)); // We want to go faster if the ball is further away
         float center = width / 2;
-        ang_z = MAXANGULARVEL * (center - posX) / width; //left turn is positive, posX < center. We turn sharper when off by morel
+        ang_z = MAXANGULARVEL * (center - posX) / width; //left turn is positive, posX < center. We turn sharper when off by more
+    } else {
+        ROS_INFO("No Ball found. Checked [%i] pixels!",pixelCount);
     }
     
     drive_robot(lin_x,ang_z);
