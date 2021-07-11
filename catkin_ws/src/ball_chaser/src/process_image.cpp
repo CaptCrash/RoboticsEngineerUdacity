@@ -5,7 +5,7 @@
 // Define a global client that can request services
 ros::ServiceClient client;
 ball_chaser::DriveToTarget srv;
-float MAXANGULARVEL = 5;
+float MAXANGULARVEL = 3;
 float MAXVELOCITY = 5;
 float STOPDISTANCE = .1;
 // This function calls the command_robot service to drive the robot in the specified direction
@@ -35,10 +35,11 @@ void process_image_callback(const sensor_msgs::Image img)
     float posX = 0;
     float posY = 0;
     int pixelCount = 0;
-    for (int pixel = 0; pixel<height*width*step;pixel=pixel+3){
+    ROS_INFO("Data step size is [%i]",sizeof(img.step));
+    for (int pixel = 0; pixel<width*step;pixel=pixel+3){
         if (img.data[pixel]>=white_pixel & img.data[pixel+1]>=white_pixel & img.data[pixel+2]>=white_pixel){
             ballFound = true;
-            int X = pixel%width;
+            int X = (pixel/3)%width;
 //            int Y = pixel/width;
             // Keep updating the ball position as we find pixels. Note that we are assuming every white pixel is part of the ball.
             posX = (posX*pixelsFound + X) / (pixelsFound+1);
