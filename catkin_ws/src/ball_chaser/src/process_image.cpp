@@ -5,9 +5,12 @@
 // Define a global client that can request services
 ros::ServiceClient client;
 ball_chaser::DriveToTarget srv;
-float MAXANGULARVEL = 3;
-float MAXVELOCITY = 5;
+float Kp_a = 1;
+float Kd_a = 1;
+float MAXVELOCITY = 1;
 float STOPDISTANCE = .1;
+float error_old_a = 0;
+
 // This function calls the command_robot service to drive the robot in the specified direction
 void drive_robot(float lin_x, float ang_z)
 {
@@ -35,7 +38,7 @@ void process_image_callback(const sensor_msgs::Image img)
     float posX = 0;
     float posY = 0;
     int pixelCount = 0;
-    ROS_INFO("Data step size is [%i]",sizeof(img.step));
+    //ROS_INFO("Data step size is [%i]",sizeof(img.step));
     for (int pixel = 0; pixel<width*step;pixel=pixel+3){
         if (img.data[pixel]>=white_pixel & img.data[pixel+1]>=white_pixel & img.data[pixel+2]>=white_pixel){
             ballFound = true;
@@ -46,24 +49,27 @@ void process_image_callback(const sensor_msgs::Image img)
 //            posY = (posY*pixelsFound + Y) / (pixelsFound+1);
             pixelsFound = pixelsFound + 1;
         }
-        if (pixel%200000 == 0){
-            ROS_INFO("Pixel [%i] has value [%i]",pixel,img.data[pixel]);
-        }
+        //if (pixel%200000 == 0){
+        //    ROS_INFO("Pixel [%i] has value [%i]",pixel,img.data[pixel]);
+        //}
         pixelCount++;
     }
     // By default we stop (default is no ball found)
     float lin_x = 0;
     float ang_z = 0;
+    float error_a = 0;
     if (ballFound){ //P controller
-        ROS_INFO("Ball Found, Calculating Request");
+        ROS_INFO("Ball Found, X Position [%f] with [%i] ball pixels. Calculating Request",posX,pixelsFound);
         //Ball detected, we need to calculate a velocity and rotation so that we can follow the ball
-        lin_x = 0;//MAXVELOCITY;// / float(pixelsFound) / (float(height)*float(width)); // We want to go faster if the ball is further away
+        lin_x = MAXVELOCITY*(1-(float(pixelsFound)/float(width*height))); // We want to go faster if the ball is further away
+        if (lin_x<.2){lin_x=0;} //give us a stop condition
         float center = width / 2;
-        ang_z = MAXANGULARVEL * (center - posX) / width; //left turn is positive, posX < center. We turn sharper when off by more
+        error_a = (center - posX);
+        ang_z = (Kp_a * error_a + Kd_a * (error_a-error_old_a))*(1-(float(pixelsFound)/float(width*height))); //left turn is positive, posX < center. We turn sharper when off by more
     } else {
         ROS_INFO("No Ball found. Checked [%i] pixels!",pixelCount);
     }
-    
+    error_old_a = error_a;
     drive_robot(lin_x,ang_z);
 }
 

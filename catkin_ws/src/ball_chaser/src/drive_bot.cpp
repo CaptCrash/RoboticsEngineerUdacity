@@ -16,7 +16,7 @@ bool handle_drive_request(ball_chaser::DriveToTarget::Request& req, ball_chaser:
     // Publish angles to drive the robot
     motor_command_publisher.publish(motor_command);
 
-    res.msg_feedback = "Command sent with velocity " + std::to_string(motor_command.linear.x) + "and rotation " + std::to_string(motor_command.angular.z);
+    res.msg_feedback = "Command sent with velocity " + std::to_string(motor_command.linear.x) + " and rotation " + std::to_string(motor_command.angular.z);
     ROS_INFO_STREAM(res.msg_feedback);
     return(true);
 }
