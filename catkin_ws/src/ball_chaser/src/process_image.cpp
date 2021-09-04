@@ -5,10 +5,9 @@
 // Define a global client that can request services
 ros::ServiceClient client;
 ball_chaser::DriveToTarget srv;
-float Kp_a = 1;
-float Kd_a = 1;
-float MAXVELOCITY = 1;
-float STOPDISTANCE = .1;
+float Kp_a = .5;
+float Kd_a = .5;
+float MAXVELOCITY = .3;
 float error_old_a = 0;
 
 // This function calls the command_robot service to drive the robot in the specified direction
@@ -61,11 +60,15 @@ void process_image_callback(const sensor_msgs::Image img)
     if (ballFound){ //P controller
         ROS_INFO("Ball Found, X Position [%f] with [%i] ball pixels. Calculating Request",posX,pixelsFound);
         //Ball detected, we need to calculate a velocity and rotation so that we can follow the ball
-        lin_x = MAXVELOCITY*(1-(float(pixelsFound)/float(width*height))); // We want to go faster if the ball is further away
-        if (lin_x<.2){lin_x=0;} //give us a stop condition
+        float ballPercent_inverse = 1-(float(pixelsFound)/float(width*height));
+        lin_x = MAXVELOCITY*ballPercent_inverse*ballPercent_inverse; // We want to go faster if the ball is further away
+        if (ballPercent_inverse<.993){
+            lin_x=0;
+            ROS_INFO("Close enough to stop! ballPercent_inverse is [%f]",ballPercent_inverse);
+            } //give us a stop condition
         float center = width / 2;
-        error_a = (center - posX);
-        ang_z = (Kp_a * error_a + Kd_a * (error_a-error_old_a))*(1-(float(pixelsFound)/float(width*height))); //left turn is positive, posX < center. We turn sharper when off by more
+        error_a = (center - posX)/width;
+        ang_z = (Kp_a * error_a + Kd_a * (error_a-error_old_a))*ballPercent_inverse*ballPercent_inverse; //left turn is positive, posX < center. We turn sharper when off by more
     } else {
         ROS_INFO("No Ball found. Checked [%i] pixels!",pixelCount);
     }
