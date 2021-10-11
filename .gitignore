@@ -1,2 +1,6 @@
 catkin_ws/devel/
 catkin_ws/build/
+catkin_WhereAmI/devel/
+catkin_WhereAmI/build/
+catkin_mapmyworld/devel/
+catkin_mapmyworld/build/
