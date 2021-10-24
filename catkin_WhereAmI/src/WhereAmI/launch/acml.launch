@@ -11,6 +11,25 @@
         <param name="odom_model_type" value="diff-corrected"/>
         <param name="base_frame_id" value="robot_footprint"/>
         <param name="global_frame_id" value="map"/>
+        <!--Laser Parameters-->
+        <!--param name="laser_z_hit" value=".997"/>
+        <param name="laser_z_rand" value=".003"/-->
+        <param name="laser_max_beams" value="50"/>
+        <param name="laser_min_range" value="-1"/>
+        <param name="laser_max_beams" value="-1"/>
+        <!--Odom Parameters-->
+        <param name="odom_alpha1" value=".001"/>
+        <param name="odom_alpha2" value=".001"/>
+        <param name="odom_alpha3" value=".001"/>
+        <param name="odom_alpha4" value=".001"/>
+        <!--General Parameters-->
+        <param name="min_particles" value="1000"/>
+        <param name="max_particles" value="1500"/>
+        <param name="update_min_a" value=".314"/> <!--Roughly changed to Pi/10-->
+        <param name="update_min_d" value=".1"/>
+        <!--Initial Pose-->
+        <param name="initial_pose_a" value="-1.5707"/>
+        <param name="initial_pose_y" value="1"/>
     </node>
 
     <!--Move Node-->
@@ -18,17 +37,6 @@
         <!--remap from="/scan" to="WhereAmI/laser/scan"/-->
         <param name="base_global_planner" value="navfn/NavfnROS"/>
         <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
-        <!--Laser Parameters-->
-        <param name="laser_z_hit" value=".9"/>
-        <param name="laser_z_rand" value=".1"/>
-        <param name="laser_max_beams" value="720"/>
-        <param name="laser_min_range" value=".1"/>
-        <param name="laser_max_beams" value="-1"/>
-        <!--General Parameters-->
-        <param name="max_particles" value="50"/>
-        <!--Initial Pose-->
-        <param name="initial_pose_a" value="-1.5707"/>
-
         <rosparam file="$(find WhereAmI)/launch/config/costmap_common_params.yaml" command="load" ns="global_costmap"/>
         <rosparam file="$(find WhereAmI)/launch/config/costmap_common_params.yaml" command="load" ns="local_costmap"/>
         <rosparam file="$(find WhereAmI)/launch/config/local_costmap_params.yaml" command="load"/>
