@@ -6,15 +6,15 @@
 float x = 1.0; //where are we trying to go?
 float y = 1.0; //where are we trying to go?
 int goalReached = 0; //Flag if we reached the current goal
-float EPSILON = 0.25; //Define a square around our goal to determine if the robot is in position
+float EPSILON = 0.25; //Define a circle around our goal to determine if the robot is in position
 
 void odomCallback(const nav_msgs::Odometry::ConstPtr& msg){
 //Check if we're at the target
 //ROS_INFO("Odom recieved! x: %f, y:%f",msg->pose.pose.position.x,msg->pose.pose.position.y);
-if (fabs(msg->pose.pose.position.x-x)<=EPSILON & fabs(msg->pose.pose.position.y-y)<=EPSILON){
+if (pow(msg->pose.pose.position.x-x,2) + pow(msg->pose.pose.position.y-y,2)<=pow(EPSILON,2)){
   //if target is reached, do something
   goalReached = 1;
-  ROS_INFO_ONCE("Goal Reached: %i", goalReached);
+  ROS_INFO_ONCE("Goal Reached");
 }
 }
 
@@ -30,8 +30,9 @@ int main( int argc, char** argv )
   uint32_t shape = visualization_msgs::Marker::CUBE;
   float visible = 1.0;
   bool carrying = false;
-   
-  while (ros::ok())
+  bool notDelivered = true;
+
+  while (ros::ok() & notDelivered)
   {
     visualization_msgs::Marker marker;
     // Set the frame ID and timestamp.  See the TF tutorials for information on these.
@@ -92,7 +93,9 @@ int main( int argc, char** argv )
         visible = 1.0f;
         marker.color.a = visible;
         ROS_INFO("Package delivered!");
-        while(ros::ok()){marker_pub.publish(marker);sleep(1);} //Keep our marker around until a ctrl+c
+        marker_pub.publish(marker);
+        notDelivered = false;
+        sleep(5);
       }
       x = -1;
       y = -1;
