@@ -20,11 +20,14 @@ if (pow(msg->pose.pose.position.x-x,2) + pow(msg->pose.pose.position.y-y,2)<=pow
 
 int main( int argc, char** argv )
 {
-  ros::init(argc, argv, "basic_shapes");
+  ros::init(argc, argv, "add_markers");
   ros::NodeHandle n;
   ros::Rate r(5);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
   ros::Subscriber odom_sub = n.subscribe("odom", 1, odomCallback); //Only look at the most recent message
+  bool finalProject;
+  ros::NodeHandle private_node_handle("~");
+  private_node_handle.param("final",finalProject,bool(true));
 
   // Set our initial shape type to be a cube
   uint32_t shape = visualization_msgs::Marker::CUBE;
@@ -101,7 +104,14 @@ int main( int argc, char** argv )
       y = -1;
       goalReached = false;
     }
-    ros::spinOnce(); //check our callbacks
+    if (finalProject){
+      ROS_INFO_ONCE("Performing callbacks");
+      ros::spinOnce(); //check our callbacks
+    } else{
+      ROS_INFO("CYCLE MODE");
+      sleep(5); // We just need to go through the goals
+      goalReached = true;
+    }
     r.sleep();
   }
 }

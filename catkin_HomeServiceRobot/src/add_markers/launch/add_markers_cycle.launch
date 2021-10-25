@@ -1,6 +1,6 @@
 <launch>
     <param name="use_sim_time" value="true"/>
     <node pkg="add_markers" type="add_markers_node" name="add_markers" output="screen">
-        <param name="final" value="true"/>
+        <param name="final" value="false"/>
     </node>
 </launch>
