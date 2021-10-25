@@ -3,14 +3,14 @@
 #include "nav_msgs/Odometry.h"
 #include <math.h>
 
-float x = 1.0; //where are we trying to go?
-float y = 1.0; //where are we trying to go?
+float x = 0.8; //where are we trying to go?
+float y = 0.8; //where are we trying to go?
 int goalReached = 0; //Flag if we reached the current goal
-float EPSILON = 0.25; //Define a circle around our goal to determine if the robot is in position
+float EPSILON = 0.25; //Within "a package" of the package
 
 void odomCallback(const nav_msgs::Odometry::ConstPtr& msg){
 //Check if we're at the target
-//ROS_INFO("Odom recieved! x: %f, y:%f",msg->pose.pose.position.x,msg->pose.pose.position.y);
+ROS_INFO("Odom recieved! x: %f, y:%f",msg->pose.pose.position.x,msg->pose.pose.position.y);
 if (pow(msg->pose.pose.position.x-x,2) + pow(msg->pose.pose.position.y-y,2)<=pow(EPSILON,2)){
   //if target is reached, do something
   goalReached = 1;
@@ -93,6 +93,7 @@ int main( int argc, char** argv )
         visible = 0.0f;
         carrying = true;
       } else{
+        sleep(5); //Simulate "Dropping" the package off, similar to pick_objects.cpp
         visible = 1.0f;
         marker.color.a = visible;
         ROS_INFO("Package delivered!");

@@ -42,8 +42,8 @@ int main(int argc, char** argv){
   ROS_INFO("Server Reached");
 
   move_base_msgs::MoveBaseGoal goal;
-  float x[2] = {1,-1};
-  float y[2] = {1,-1};
+  float x[2] = {0.8,-1};
+  float y[2] = {0.8,-1};
 
   for (int goalId = 0; goalId < 2; goalId++){
     // Define a position and orientation for the robot to reach
@@ -55,7 +55,7 @@ int main(int argc, char** argv){
     if (!goalReached){
       return 0; // Goal couldn't be reached for some reason, end the program
     } else{
-      ros::Duration(5.0).sleep(); // Goal reached, wait 5 seconds
+      ros::Duration(5.0).sleep(); // Goal reached, wait 5 seconds (simulates picking up the package)
     }
   }
   ROS_INFO("All goals reached!");
