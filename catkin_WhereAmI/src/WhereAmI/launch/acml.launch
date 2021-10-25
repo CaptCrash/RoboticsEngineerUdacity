@@ -16,12 +16,12 @@
         <param name="laser_z_rand" value=".003"/-->
         <param name="laser_max_beams" value="50"/>
         <param name="laser_min_range" value="-1"/>
-        <param name="laser_max_beams" value="-1"/>
+        <param name="laser_max_range" value="-1"/>
         <!--Odom Parameters-->
-        <param name="odom_alpha1" value=".001"/>
-        <param name="odom_alpha2" value=".001"/>
-        <param name="odom_alpha3" value=".001"/>
-        <param name="odom_alpha4" value=".001"/>
+        <param name="odom_alpha1" value=".01"/>
+        <param name="odom_alpha2" value=".01"/>
+        <param name="odom_alpha3" value=".01"/>
+        <param name="odom_alpha4" value=".01"/>
         <!--General Parameters-->
         <param name="min_particles" value="1000"/>
         <param name="max_particles" value="1500"/>
