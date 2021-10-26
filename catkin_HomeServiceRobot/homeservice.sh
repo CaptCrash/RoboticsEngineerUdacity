@@ -1,7 +1,7 @@
 #!/bin/sh
-xterm -e " roslaunch turtlebot_gazebo turtlebot_world.launch  " &
+xterm -e " roslaunch turtlebot_gazebo turtlebot_world.launch  world_file:=src/map/weird2.world" &
 sleep 5
-xterm -e " source devel/setup.bash; roslaunch turtlebot_gazebo amcl_demo.launch" &
+xterm -e " source devel/setup.bash; roslaunch turtlebot_gazebo amcl_demo.launch map_file:=src/map/mymap.yaml" &
 sleep 5
 xterm -e " source devel/setup.bash; roslaunch turtlebot_rviz_launchers view_navigation.launch " &
 sleep 5
