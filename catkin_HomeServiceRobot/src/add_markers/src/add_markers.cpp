@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
-#include "nav_msgs/Odometry.h"
+#include "geometry_msgs/PoseWithCovariance.h"
 #include <math.h>
 
 float x = 0.8; //where are we trying to go?
@@ -8,10 +8,10 @@ float y = 0.8; //where are we trying to go?
 int goalReached = 0; //Flag if we reached the current goal
 float EPSILON = 0.25; //Within "a package" of the package
 
-void odomCallback(const nav_msgs::Odometry::ConstPtr& msg){
+void odomCallback(const geometry_msgs::PoseWithCovariance::ConstPtr& msg){
 //Check if we're at the target
-ROS_INFO("Odom recieved! x: %f, y:%f",msg->pose.pose.position.x,msg->pose.pose.position.y);
-if (pow(msg->pose.pose.position.x-x,2) + pow(msg->pose.pose.position.y-y,2)<=pow(EPSILON,2)){
+ROS_INFO("Odom recieved! x: %f, y:%f",msg->pose.position.x,msg->pose.position.y);
+if (pow(msg->pose.position.x-x,2) + pow(msg->pose.position.y-y,2)<=pow(EPSILON,2)){
   //if target is reached, do something
   goalReached = 1;
   ROS_INFO_ONCE("Goal Reached");
@@ -24,7 +24,7 @@ int main( int argc, char** argv )
   ros::NodeHandle n;
   ros::Rate r(5);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
-  ros::Subscriber odom_sub = n.subscribe("odom", 1, odomCallback); //Only look at the most recent message
+  ros::Subscriber odom_sub = n.subscribe("amcl_pose", 1, odomCallback); //Only look at the most recent message
   bool finalProject;
   ros::NodeHandle private_node_handle("~");
   private_node_handle.param("final",finalProject,bool(true));

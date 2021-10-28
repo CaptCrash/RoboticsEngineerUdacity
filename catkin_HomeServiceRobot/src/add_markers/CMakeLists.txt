@@ -104,7 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
   LIBRARIES add_markers
-  CATKIN_DEPENDS roscpp visualization_msgs
+  CATKIN_DEPENDS roscpp visualization_msgs geometry_msgs
   DEPENDS system_lib
 )
 
